@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 #-
 # Copyright (c) 2009-2015 Juan Romero Pardines.
@@ -134,7 +134,14 @@ install_packages() {
         sed -e "s/\#\(${LOCALE}.*\)/\1/g" -i "$ROOTFS"/etc/default/libc-locales
     fi
     chroot "$ROOTFS" env -i xbps-reconfigure -a
+    echo root:voidlinux | chroot "$ROOTFS" chpasswd -c SHA512
+    chroot "$ROOTFS" usermod -s /bin/bash root
 
+    if [ -x installer.sh ]; then
+        install -Dm755 installer.sh "$ROOTFS"/usr/sbin/void-installer
+    else
+        install -Dm755 /usr/sbin/void-installer "$ROOTFS"/usr/sbin/void-installer
+    fi
     # Cleanup and remove useless stuff.
     rm -rf "$ROOTFS"/var/cache/* "$ROOTFS"/run/* "$ROOTFS"/var/run/*
 }
@@ -167,6 +174,8 @@ generate_initramfs() {
 
     mv "$ROOTFS"/boot/initrd "$BOOT_DIR"
     cp "$ROOTFS"/boot/vmlinuz-$KERNELVERSION "$BOOT_DIR"/vmlinuz
+    chroot "$ROOTFS" chown -R 0:0 /etc /lib/firmware /boot /usr
+    chroot "$ROOTFS" make -C /boot
 }
 
 cleanup_rootfs() {
