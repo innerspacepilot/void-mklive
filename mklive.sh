@@ -355,6 +355,7 @@ ARCH=$(xbps-uhelper arch)
 
 case $BASE_ARCH in
     x86_64*|i686*) ;;
+		aarch64) ;;
     *) >&2 echo architecture $BASE_ARCH not supported by mklive.sh; exit 1;;
 esac
 
