@@ -1,0 +1,9 @@
+GETTY_ARGS="-L"
+if [ -x /sbin/agetty -o -x /bin/agetty ]; then
+	# util-linux specific settings
+	GETTY_ARGS="${GETTY_ARGS} -8"
+fi
+
+BAUD_RATE=1500000
+TERM_NAME=vt100
+
