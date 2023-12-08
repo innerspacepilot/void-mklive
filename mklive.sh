@@ -433,14 +433,18 @@ mkdir -p "$ROOTFS"/etc
 print_step "Installing void pkgs into the rootfs: ${PACKAGE_LIST} ..."
 install_packages
 
-: ${DEFAULT_SERVICE_LIST:=agetty-tty1 agetty-tty2 agetty-tty3 agetty-tty4 agetty-tty5 agetty-tty6 udevd}
-print_step "Enabling services: ${SERVICE_LIST} ..."
-enable_services ${DEFAULT_SERVICE_LIST} ${SERVICE_LIST}
-
 if [ "${#INCLUDE_DIRS[@]}" -gt 0 ];then
     print_step "Copying directory structures into the rootfs ..."
     copy_include_directories
 fi
+
+: ${DEFAULT_SERVICE_LIST:=agetty-tty1 agetty-tty2 agetty-tty3 agetty-tty4 agetty-tty5 agetty-tty6 udevd}
+print_step "Enabling services: ${SERVICE_LIST} ..."
+enable_services ${DEFAULT_SERVICE_LIST} ${SERVICE_LIST}
+
+# run make in /boot
+make -C "$ROOTFS"/boot
+
 
 print_step "Generating initramfs image ($INITRAMFS_COMPRESSION)..."
 generate_initramfs
